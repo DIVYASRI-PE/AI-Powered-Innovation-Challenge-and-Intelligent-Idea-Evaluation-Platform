@@ -1,48 +1,30 @@
 import axios from 'axios';
+import api from './api';
 
-const API_BASE_URL = 'http://localhost:8080/api';
+const AI_AGENT_URL = import.meta.env.VITE_AI_AGENT_URL || 'http://localhost:3001';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/api';
 
 const aiService = {
-  evaluateIdea: async (ideaId) => {
-    const token = localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')).token : null;
-    const response = await axios.post(`${API_BASE_URL}/ai/evaluate/${ideaId}`, null, {
-      headers: { Authorization: `Bearer ${token}` }
-    });
-    return response.data;
-  },
+  evaluateIdea: (ideaId) =>
+    api.post(`/ai/evaluate/${ideaId}`).then(r => r.data),
 
-  getAIFeedback: async (ideaId) => {
-    const response = await axios.get(`${API_BASE_URL}/ai/feedback/${ideaId}`);
-    return response.data;
-  },
+  getAIFeedback: (ideaId) =>
+    api.get(`/ai/feedback/${ideaId}`).then(r => r.data),
 
-  improveIdea: async (ideaId) => {
-    const token = localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')).token : null;
-    const response = await axios.post(`${API_BASE_URL}/ai/improve/${ideaId}`, null, {
-      headers: { Authorization: `Bearer ${token}` }
-    });
-    return response.data;
-  },
+  improveIdea: (ideaId) =>
+    api.post(`/ai/improve/${ideaId}`).then(r => r.data),
 
-  checkSimilarity: async (ideaId1, ideaId2) => {
-    const token = localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')).token : null;
-    const response = await axios.post(`${API_BASE_URL}/ai/similarity`, null, {
-      params: { ideaId1, ideaId2 },
-      headers: { Authorization: `Bearer ${token}` }
-    });
-    return response.data;
-  },
+  checkSimilarity: (ideaId1, ideaId2) =>
+    api.post(`/ai/similarity`, null, { params: { ideaId1, ideaId2 } }).then(r => r.data),
 
   chat: async (message, sessionId = null, context = {}) => {
-    // Call AI agent directly — faster and no auth issues
     try {
-      const response = await axios.post('http://localhost:3001/api/ai/chatbot', {
+      const response = await axios.post(`${AI_AGENT_URL}/api/ai/chatbot`, {
         message,
         context,
       });
       return response.data;
     } catch (e) {
-      // fallback to backend if agent is down
       const token = localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')).token : null;
       const response = await axios.post(`${API_BASE_URL}/ai/chat`, { message, context }, {
         params: sessionId ? { sessionId } : {},
@@ -52,13 +34,8 @@ const aiService = {
     }
   },
 
-  getChatHistory: async () => {
-    const token = localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')).token : null;
-    const response = await axios.get(`${API_BASE_URL}/ai/chat/history`, {
-      headers: { Authorization: `Bearer ${token}` }
-    });
-    return response.data;
-  }
+  getChatHistory: () =>
+    api.get('/ai/chat/history').then(r => r.data),
 };
 
 export default aiService;

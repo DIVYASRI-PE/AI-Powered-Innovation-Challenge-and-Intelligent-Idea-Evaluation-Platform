@@ -1,0 +1,32 @@
+services:
+  # Backend - Spring Boot
+  - type: web
+    name: innovateai-backend
+    runtime: java
+    buildCommand: cd backend && ./mvnw clean package -DskipTests
+    startCommand: java -jar backend/target/innovation-platform-1.0.0.jar --spring.profiles.active=prod
+    envVars:
+      - key: DATABASE_URL
+        value: jdbc:mysql://your-db-host:3306/innovation_platform
+      - key: DB_USERNAME
+        value: root
+      - key: DB_PASSWORD
+        generateValue: true
+      - key: JWT_SECRET
+        generateValue: true
+      - key: FRONTEND_URL
+        value: https://your-app.vercel.app
+
+  # AI Agent - Node.js
+  - type: web
+    name: innovateai-ai-agent
+    runtime: node
+    buildCommand: cd ai-agent && npm install
+    startCommand: cd ai-agent && npm start
+    envVars:
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: MODEL_NAME
+        value: gpt-3.5-turbo
+      - key: PORT
+        value: "3001"

@@ -23,6 +23,7 @@ public class Notification {
 
     private String link;
 
+    @Column(name = "is_read")
     private Boolean read = false;
 
     @Column(name = "created_at")
