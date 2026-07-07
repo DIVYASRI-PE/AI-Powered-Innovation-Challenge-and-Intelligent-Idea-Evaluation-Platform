@@ -1,0 +1,69 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: innovation-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: innovation_platform
+      MYSQL_USER: innovation_user
+      MYSQL_PASSWORD: innovation_password
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./database/schema.sql:/docker-entrypoint-initdb.d/schema.sql
+    networks:
+      - innovation-network
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: innovation-backend
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/innovation_platform
+      SPRING_DATASOURCE_USERNAME: innovation_user
+      SPRING_DATASOURCE_PASSWORD: innovation_password
+      AI_AGENT_URL: http://ai-agent:3001
+    depends_on:
+      - mysql
+      - ai-agent
+    networks:
+      - innovation-network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: innovation-frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - innovation-network
+
+  ai-agent:
+    build:
+      context: ./ai-agent
+      dockerfile: Dockerfile
+    container_name: innovation-ai-agent
+    ports:
+      - "3001:3001"
+    environment:
+      PORT: 3001
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      MODEL_NAME: gpt-3.5-turbo
+    networks:
+      - innovation-network
+
+volumes:
+  mysql-data:
+
+networks:
+  innovation-network:
+    driver: bridge

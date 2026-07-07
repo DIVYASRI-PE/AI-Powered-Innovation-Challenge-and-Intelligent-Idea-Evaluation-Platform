@@ -1,0 +1,32 @@
+# ── Java / Maven ───────────────────────────────────
+backend/target/
+backend/.mvn/wrapper/maven-wrapper.jar
+!backend/.mvn/wrapper/maven-wrapper.properties
+*.class
+*.jar
+*.war
+*.ear
+
+# ── Node / npm ──────────────────────────────────────
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+dist/
+.env
+.env.local
+.env.production
+
+# ── H2 file database ────────────────────────────────
+backend/data/
+
+# ── IDE / OS ────────────────────────────────────────
+.DS_Store
+.idea/
+*.iml
+.vscode/settings.json
+Thumbs.db
+
+# ── Logs ────────────────────────────────────────────
+*.log
+logs/
