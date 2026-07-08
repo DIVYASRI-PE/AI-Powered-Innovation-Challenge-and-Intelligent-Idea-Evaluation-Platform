@@ -45,7 +45,10 @@ public class User implements UserDetails {
     @Column(name = "register_number", unique = true)
     private String registerNumber;
 
+    @Column(name = "user_year")
     private String year;
+
+    @Column(name = "user_section")
     private String section;
 
     // Faculty-specific fields

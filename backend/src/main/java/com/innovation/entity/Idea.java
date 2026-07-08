@@ -25,7 +25,7 @@ public class Idea {
 
     private String domain;
 
-    @Column(name = "abstract", columnDefinition = "TEXT")
+    @Column(name = "idea_abstract", columnDefinition = "TEXT")
     private String ideaAbstract;
 
     @Column(columnDefinition = "TEXT")
