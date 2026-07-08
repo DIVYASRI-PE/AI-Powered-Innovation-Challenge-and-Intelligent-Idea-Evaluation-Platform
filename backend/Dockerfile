@@ -1,12 +1,18 @@
-FROM maven:3.9.5-eclipse-temurin-21 AS build
+FROM maven:3.9.6-eclipse-temurin-21-alpine AS build
 WORKDIR /app
 COPY pom.xml .
-RUN mvn dependency:go-offline -B
+RUN mvn dependency:go-offline -B --no-transfer-progress
 COPY src ./src
-RUN mvn clean package -DskipTests
+RUN mvn clean package -DskipTests --no-transfer-progress
 
 FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
 COPY --from=build /app/target/innovation-platform-1.0.0.jar app.jar
 EXPOSE 8080
-ENTRYPOINT ["java", "-Dspring.profiles.active=prod", "-jar", "app.jar"]
+# Reduced memory for Render free tier (512MB)
+ENTRYPOINT ["java", \
+  "-Xmx384m", \
+  "-Xms128m", \
+  "-XX:+UseContainerSupport", \
+  "-Dspring.profiles.active=prod", \
+  "-jar", "app.jar"]
