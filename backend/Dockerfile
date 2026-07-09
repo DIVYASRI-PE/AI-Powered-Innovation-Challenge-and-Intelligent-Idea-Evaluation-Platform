@@ -9,10 +9,4 @@ FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
 COPY --from=build /app/target/innovation-platform-1.0.0.jar app.jar
 EXPOSE 8080
-# Reduced memory for Render free tier (512MB)
-ENTRYPOINT ["java", \
-  "-Xmx384m", \
-  "-Xms128m", \
-  "-XX:+UseContainerSupport", \
-  "-Dspring.profiles.active=prod", \
-  "-jar", "app.jar"]
+ENTRYPOINT ["java","-Xmx384m","-Xms128m","-XX:+UseContainerSupport","-Dspring.profiles.active=prod","-jar","app.jar"]

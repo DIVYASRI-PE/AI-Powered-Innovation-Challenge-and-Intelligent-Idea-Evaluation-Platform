@@ -21,6 +21,7 @@ public class Leaderboard {
     @JoinColumn(name = "idea_id")
     private Idea idea;
 
+    @Column(name = "rank_position")
     private Integer rank;
 
     @Column(name = "total_score", precision = 5, scale = 2)

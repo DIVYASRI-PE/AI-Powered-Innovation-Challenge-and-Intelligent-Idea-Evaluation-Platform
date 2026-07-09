@@ -77,12 +77,26 @@ public class AIController {
     public ResponseEntity<ChatResponse> chat(@RequestBody ChatRequest chatRequest,
                                              @RequestParam(required = false) String sessionId,
                                              @AuthenticationPrincipal UserPrincipal userPrincipal) {
-        ChatResponse response = chatbotService.chat(userPrincipal.getId(), chatRequest.getMessage(), sessionId, chatRequest.getContext());
+        Long userId = userPrincipal != null ? userPrincipal.getId() : null;
+        String message = chatRequest.getMessage();
+        Map<String, Object> context = chatRequest.getContext() != null ? chatRequest.getContext() : new java.util.HashMap<>();
+        
+        if (userId == null) {
+            // Anonymous chat — return simple response
+            ChatResponse response = new ChatResponse();
+            response.setResponse("Please log in to use the AI chatbot.");
+            return ResponseEntity.ok(response);
+        }
+        
+        ChatResponse response = chatbotService.chat(userId, message, sessionId, context);
         return ResponseEntity.ok(response);
     }
 
     @GetMapping("/chat/history")
     public ResponseEntity<List<ChatHistory>> getChatHistory(@AuthenticationPrincipal UserPrincipal userPrincipal) {
+        if (userPrincipal == null) {
+            return ResponseEntity.ok(java.util.Collections.emptyList());
+        }
         List<ChatHistory> history = chatbotService.getChatHistory(userPrincipal.getId());
         return ResponseEntity.ok(history);
     }
