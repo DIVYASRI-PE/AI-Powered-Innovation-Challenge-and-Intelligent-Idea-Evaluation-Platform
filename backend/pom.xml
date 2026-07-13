@@ -75,11 +75,11 @@
             <scope>runtime</scope>
         </dependency>
 
-        <!-- Dev Tools -->
+        <!-- Dev Tools (local only, excluded from prod build) -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-devtools</artifactId>
-            <scope>runtime</scope>
+            <scope>provided</scope>
             <optional>true</optional>
         </dependency>
 
