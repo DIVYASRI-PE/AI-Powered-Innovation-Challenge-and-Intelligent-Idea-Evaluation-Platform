@@ -6,6 +6,7 @@ const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/api
 const api = axios.create({
   baseURL: BASE_URL,
   headers: { 'Content-Type': 'application/json' },
+  timeout: 60000, // 60 seconds — allows backend to wake up from sleep
 });
 
 // Attach JWT token to every request automatically
